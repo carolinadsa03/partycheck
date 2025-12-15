@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PartyCheck - Protótipo Interativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+
+:root {
+/* Cores padrão - Modo Escuro */
+--bg-primary: #0a0e1a;
+--bg-secondary: #151928;
+--bg-tertiary: #1a1f2e;
+--text-primary: #ffffff;
+--text-secondary: #cbd5e0;
+--text-tertiary: #718096;
+--accent-primary: #00f2fe;
+--accent-secondary: #4facfe;
+--border-color: rgba(0, 242, 254, 0.2);
+--shadow: rgba(0, 0, 0, 0.3);
+}
+
+body.light-mode {
+--bg-primary: #ffffff;
+--bg-secondary: #f7fafc;
+--bg-tertiary: #edf2f7;
+--text-primary: #1a202c;
+--text-secondary: #4a5568;
+--text-tertiary: #718096;
+--accent-primary: #0099cc;
+--accent-secondary: #0066ff;
+--border-color: rgba(0, 153, 204, 0.2);
+--shadow: rgba(0, 0, 0, 0.1);
+}
+
+body.purple-mode {
+--bg-primary: #1a0f2e;
+--bg-secondary: #2d1b4e;
+--bg-tertiary: #3d2663;
+--text-primary: #ffffff;
+--text-secondary: #d4c5f9;
+--text-tertiary: #a78bfa;
+--accent-primary: #a855f7;
+--accent-secondary: #c084fc;
+--border-color: rgba(168, 85, 247, 0.3);
+--shadow: rgba(0, 0, 0, 0.4);
+}
+
+body.green-mode {
+--bg-primary: #0a1f0f;
+--bg-secondary: #1a3d1f;
+--bg-tertiary: #2d5a3a;
+--text-primary: #ffffff;
+--text-secondary: #c6f6d5;
+--text-tertiary: #9ae6b4;
+--accent-primary: #10b981;
+--accent-secondary: #34d399;
+--border-color: rgba(16, 185, 129, 0.3);
+--shadow: rgba(0, 0, 0, 0.4);
+}
+
+body {
+font-family: 'Work Sans', sans-serif;
+background: var(--bg-primary);
+color: var(--text-primary);
+transition: all 0.3s ease;
+overflow-x: hidden;
+}
+
+/* Container Principal */
+.app-container {
+max-width: 480px;
+margin: 0 auto;
+background: var(--bg-primary);
+min-height: 100vh;
+position: relative;
+box-shadow: 0 0 50px var(--shadow);
+}
+
+/* Header da App */
+.app-header {
+background: var(--bg-secondary);
+padding: 1rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-bottom: 2px solid var(--border-color);
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.app-logo {
+font-family: 'Montserrat', sans-serif;
+font-size: 1.5rem;
+font-weight: 900;
+background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.header-icons {
+display: flex;
+gap: 1rem;
+align-items: center;
+}
+
+.icon-btn {
+background: transparent;
+border: none;
+color: var(--text-secondary);
+font-size: 1.3rem;
+cursor: pointer;
+padding: 0.3rem;
+transition: all 0.3s ease;
+}
+
+.icon-btn:hover {
+color: var(--accent-primary);
+transform: scale(1.1);
+}
+
+#themeToggleBtn {
+font-size: 1.4rem;
+}
+
+#themeToggleBtn:active {
+transform: scale(0.9) rotate(180deg);
+}
+
+/* Points Display */
+.points-header {
+background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+padding: 1.5rem;
+text-align: center;
+border-bottom: 2px solid var(--border-color);
+}
+
+.points-display {
+display: flex;
+justify-content: center;
+gap: 2rem;
+margin-top: 1rem;
+}
+
+.point-badge {
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.point-value {
+font-size: 2.5rem;
+font-weight: 900;
+font-family: 'Montserrat', sans-serif;
+}
+
+.point-value.yellow {
+color: #ffd700;
+}
+
+.point-value.green {
+color: #00ff88;
+}
+
+.point-label {
+font-size: 0.85rem;
+color: var(--text-tertiary);
+margin-top: 0.3rem;
+}
+
+/* Navigation */
+.bottom-nav {
+position: fixed;
+bottom: 0;
+left: 50%;
+transform: translateX(-50%);
+width: 100%;
+max-width: 480px;
+background: var(--bg-secondary);
+border-top: 2px solid var(--border-color);
+display: flex;
+justify-content: space-around;
+padding: 0.8rem 0;
+z-index: 100;
+}
+
+.nav-item {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.3rem;
+color: var(--text-tertiary);
+cursor: pointer;
+transition: all 0.3s ease;
+padding: 0.5rem 1rem;
+border-radius: 12px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+color: var(--accent-primary);
+background: rgba(0, 242, 254, 0.1);
+}
+
+.nav-icon {
+font-size: 1.5rem;
+}
+
+.nav-label {
+font-size: 0.7rem;
+font-weight: 600;
+}
+
+/* Content Area */
+.content {
+padding: 1rem;
+padding-bottom: 5rem;
+}
+
+.screen {
+display: none;
+}
+
+.screen.active {
+display: block;
+animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+/* Section Title */
+.section-title {
+font-family: 'Montserrat', sans-serif;
+font-size: 1.3rem;
+margin-bottom: 1rem;
+color: var(--accent-primary);
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+/* Action Grid */
+.action-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 1rem;
+margin-bottom: 1.5rem;
+}
+
+.action-card {
+background: var(--bg-secondary);
+padding: 1.5rem;
+border-radius: 16px;
+text-align: center;
+border: 2px solid var(--border-color);
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.action-card:hover {
+border-color: var(--accent-primary);
+transform: translateY(-3px);
+box-shadow: 0 8px 16px var(--shadow);
+}
+
+.action-card.emergency {
+background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(255, 170, 0, 0.2));
+border-color: #ff3366;
+}
+
+.action-icon {
+font-size: 2.5rem;
+margin-bottom: 0.5rem;
+}
+
+.action-title {
+font-weight: 700;
+margin-bottom: 0.3rem;
+color: var(--text-primary);
+}
+
+.action-subtitle {
+font-size: 0.8rem;
+color: var(--text-tertiary);
+}
+
+/* Rewards Shop */
+.reward-card {
+background: var(--bg-secondary);
+padding: 1rem;
+border-radius: 16px;
+margin-bottom: 1rem;
+border: 2px solid var(--border-color);
+display: flex;
+gap: 1rem;
+align-items: center;
+transition: all 0.3s ease;
+}
+
+.reward-card:hover {
+border-color: var(--accent-primary);
+transform: translateX(5px);
+}
+
+.reward-icon {
+font-size: 3rem;
+flex-shrink: 0;
+}
+
+.reward-info {
+flex: 1;
+}
+
+.reward-title {
+font-weight: 700;
+margin-bottom: 0.3rem;
+color: var(--text-primary);
+}
+
+.reward-description {
+font-size: 0.85rem;
+color: var(--text-secondary);
+margin-bottom: 0.5rem;
+}
+
+.reward-cost {
+font-weight: 700;
+color: #ffd700;
+font-size: 1.1rem;
+}
+
+.reward-btn {
+background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+color: white;
+border: none;
+padding: 0.6rem 1.2rem;
+border-radius: 8px;
+font-weight: 700;
+cursor: pointer;
+white-space: nowrap;
+}
+
+.reward-btn:disabled {
+opacity: 0.5;
+cursor: not-allowed;
+}
+
+/* Social Feed */
+.post-card {
+background: var(--bg-secondary);
+padding: 1rem;
+border-radius: 16px;
+margin-bottom: 1rem;
+border: 2px solid var(--border-color);
+}
+
+.post-header {
+display: flex;
+align-items: center;
+gap: 0.8rem;
+margin-bottom: 0.8rem;
+}
+
+.post-avatar {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.2rem;
+}
+
+.post-user-info {
+flex: 1;
+}
+
+.post-username {
+font-weight: 700;
+color: var(--text-primary);
+}
+
+.post-time {
+font-size: 0.75rem;
+color: var(--text-tertiary);
+}
+
+.post-content {
+color: var(--text-secondary);
+line-height: 1.6;
+margin-bottom: 0.8rem;
+}
+
+.post-actions {
+display: flex;
+gap: 1.5rem;
+padding-top: 0.5rem;
+border-top: 1px solid var(--border-color);
+}
+
+.post-action {
+display: flex;
+align-items: center;
+gap: 0.3rem;
+color: var(--text-tertiary);
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.post-action:hover {
+color: var(--accent-primary);
+}
+
+.post-action.liked {
+color: #ff3366;
+}
+
+/* New Post Button */
+.new-post-btn {
+position: fixed;
+bottom: 5rem;
+right: 1rem;
+width: 60px;
+height: 60px;
+border-radius: 50%;
+background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+color: white;
+border: none;
+font-size: 2rem;
+cursor: pointer;
+box-shadow: 0 4px 12px var(--shadow);
+z-index: 50;
+}
+
+/* Settings Panel */
+.settings-group {
+background: var(--bg-secondary);
+padding: 1rem;
+border-radius: 16px;
+margin-bottom: 1rem;
+border: 2px solid var(--border-color);
+}
+
+.settings-title {
+font-weight: 700;
+margin-bottom: 1rem;
+color: var(--text-primary);
+}
+
+.settings-option {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0.8rem 0;
+border-bottom: 1px solid var(--border-color);
+}
+
+.settings-option:last-child {
+border-bottom: none;
+}
+
+.theme-selector {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 0.8rem;
+margin-top: 0.5rem;
+}
+
+.theme-option {
+padding: 1rem;
+border-radius: 12px;
+text-align: center;
+cursor: pointer;
+border: 2px solid var(--border-color);
+transition: all 0.3s ease;
+}
+
+.theme-option:hover {
+transform: scale(1.05);
+}
+
+.theme-option.active {
+border-color: var(--accent-primary);
+background: rgba(0, 242, 254, 0.1);
+}
+
+.theme-dark { background: linear-gradient(135deg, #0a0e1a, #1a1f2e); }
+.theme-light { background: linear-gradient(135deg, #ffffff, #edf2f7); }
+.theme-purple { background: linear-gradient(135deg, #1a0f2e, #3d2663); }
+.theme-green { background: linear-gradient(135deg, #0a1f0f, #2d5a3a); }
+
+/* Stats Grid */
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 1rem;
+margin-bottom: 1.5rem;
+}
+
+.stat-card {
+background: var(--bg-secondary);
+padding: 1.2rem;
+border-radius: 16px;
+text-align: center;
+border: 2px solid var(--border-color);
+}
+
+.stat-icon {
+font-size: 2rem;
+margin-bottom: 0.5rem;
+}
+
+.stat-value {
+font-size: 1.8rem;
+font-weight: 900;
+color: var(--accent-primary);
+font-family: 'Montserrat', sans-serif;
+}
+
+.stat-label {
+font-size: 0.85rem;
+color: var(--text-tertiary);
+margin-top: 0.3rem;
+}
+
+/* Info Box */
+.info-box {
+background: rgba(0, 242, 254, 0.1);
+border: 1px solid var(--accent-primary);
+border-radius: 12px;
+padding: 1rem;
+margin-bottom: 1rem;
+}
+
+.info-box-title {
+font-weight: 700;
+color: var(--accent-primary);
+margin-bottom: 0.5rem;
+}
+
+.info-box-text {
+font-size: 0.9rem;
+color: var(--text-secondary);
+line-height: 1.5;
+}
+
+/* Modal */
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+z-index: 200;
+align-items: center;
+justify-content: center;
+}
+
+.modal.active {
+display: flex;
+}
+
+.modal-content {
+background: var(--bg-secondary);
+padding: 2rem;
+border-radius: 20px;
+max-width: 400px;
+margin: 1rem;
+border: 2px solid var(--accent-primary);
+}
+
+.modal-title {
+font-family: 'Montserrat', sans-serif;
+font-size: 1.5rem;
+margin-bottom: 1rem;
+color: var(--accent-primary);
+}
+
+.modal-text {
+color: var(--text-secondary);
+margin-bottom: 1.5rem;
+line-height: 1.6;
+}
+
+.modal-actions {
+display: flex;
+gap: 1rem;
+}
+
+.btn {
+flex: 1;
+padding: 0.8rem;
+border-radius: 12px;
+border: none;
+font-weight: 700;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.btn-primary {
+background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+color: white;
+}
+
+.btn-secondary {
+background: var(--bg-tertiary);
+color: var(--text-primary);
+border: 2px solid var(--border-color);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+width: 8px;
+}
+
+::-webkit-scrollbar-track {
+background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+background: var(--accent-primary);
+border-radius: 4px;
+}
+
+/* Filter Tabs */
+.filter-tabs {
+display: flex;
+gap: 0.5rem;
+margin-bottom: 1rem;
+overflow-x: auto;
+padding-bottom: 0.5rem;
+}
+
+.filter-tab {
+padding: 0.6rem 1.2rem;
+border-radius: 20px;
+background: var(--bg-secondary);
+border: 2px solid var(--border-color);
+color: var(--text-secondary);
+cursor: pointer;
+white-space: nowrap;
+transition: all 0.3s ease;
+}
+
+.filter-tab:hover,
+.filter-tab.active {
+background: var(--accent-primary);
+color: white;
+border-color: var(--accent-primary);
+}
+
+/* Welcome Message */
+.welcome-section {
+text-align: center;
+padding: 2rem 1rem;
+}
+
+.welcome-title {
+font-family: 'Montserrat', sans-serif;
+font-size: 2rem;
+background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+margin-bottom: 0.5rem;
+}
+
+.welcome-subtitle {
+color: var(--text-tertiary);
+margin-bottom: 2rem;
+}
+</style>
+
+</head>
+<body>
+<div class="app-container">
+<!-- Header -->
+<div class="app-header">
+<div class="app-logo">PartyCheck</div>
+<div class="header-icons">
+<button class="icon-btn" id="themeToggleBtn" onclick="cycleTheme()" title="Mudar Tema">🎨</button>
+<button class="icon-btn" onclick="showNotifications()">🔔</button>
+<button class="icon-btn" onclick="showScreen('settings')">⚙️</button>
+</div>
+</div>
+
+<!-- Points Display -->
+<div class="points-header">
+<div style="color: var(--text-tertiary); font-size: 0.9rem;">Os Meus Pontos</div>
+<div class="points-display">
+<div class="point-badge">
+<div class="point-value yellow" id="yellowPoints">450</div>
+<div class="point-label">⭐ Conversíveis</div>
+</div>
+<div class="point-badge">
+<div class="point-value green" id="greenPoints">1.235</div>
+<div class="point-label">💚 Motivação</div>
+</div>
+</div>
+</div>
+
+<!-- Content -->
+<div class="content">
+<!-- HOME SCREEN -->
+<div class="screen active" id="home">
+<div class="welcome-section">
+<div class="welcome-title">Olá, João!</div>
+<div class="welcome-subtitle">Pronto para uma noite segura?</div>
+</div>
+
+<div class="section-title">⚡ Acesso Rápido</div>
+<div class="action-grid">
+<div class="action-card emergency" onclick="showEmergencyModal()">
+<div class="action-icon">🚨</div>
+<div class="action-title">SOS 112</div>
+<div class="action-subtitle">Emergência</div>
+</div>
+<div class="action-card" onclick="openAIChat()">
+<div class="action-icon">🤖</div>
+<div class="action-title">Chat IA</div>
+<div class="action-subtitle">Dúvidas rápidas</div>
+</div>
+<div class="action-card" onclick="showScreen('buddies')">
+<div class="action-icon">👥</div>
+<div class="action-title">Meu Grupo</div>
+<div class="action-subtitle">5 buddies</div>
+</div>
+<div class="action-card" onclick="showScreen('substances')">
+<div class="action-icon">💊</div>
+<div class="action-title">Substâncias</div>
+<div class="action-subtitle">Info & Riscos</div>
+</div>
+<div class="action-card" onclick="earnPoints(100, 'yellow')">
+<div class="action-icon">🚕</div>
+<div class="action-title">Uber</div>
+<div class="action-subtitle">+100pts ⭐</div>
+</div>
+<div class="action-card" onclick="earnPoints(20, 'yellow')">
+<div class="action-icon">📸</div>
+<div class="action-title">Foto Água</div>
+<div class="action-subtitle">+20pts ⭐</div>
+</div>
+</div>
+
+<div class="section-title">📊 Esta Semana</div>
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-icon">🚶</div>
+<div class="stat-value">8.3km</div>
+<div class="stat-label">Distância</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">⏱️</div>
+<div class="stat-value">3h 45m</div>
+<div class="stat-label">Tempo Ativo</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">📸</div>
+<div class="stat-value">12</div>
+<div class="stat-label">Fotos Água</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">😴</div>
+<div class="stat-value">7.5h</div>
+<div class="stat-label">Sono Médio</div>
+</div>
+</div>
+
+<div class="info-box">
+<div class="info-box-title">💡 Próximo Achievement</div>
+<div class="info-box-text">Faltam 50pts amarelos para desbloquear "Caminhante Noturno" e ganhar +100pts bonus!</div>
+</div>
+</div>
+
+<!-- REWARDS SCREEN -->
+<div class="screen" id="rewards">
+<div class="section-title">🏪 Loja de Prémios</div>
+
+<div class="filter-tabs">
+<div class="filter-tab active" onclick="filterRewards('all')">Todos</div>
+<div class="filter-tab" onclick="filterRewards('transport')">Transportes</div>
+<div class="filter-tab" onclick="filterRewards('food')">Comida</div>
+<div class="filter-tab" onclick="filterRewards('entertainment')">Lazer</div>
+<div class="filter-tab" onclick="filterRewards('experiences')">Experiências</div>
+</div>
+
+<div id="rewardsList">
+<!-- TRANSPORTES -->
+<div class="reward-card" data-category="transport">
+<div class="reward-icon">🚕</div>
+<div class="reward-info">
+<div class="reward-title">Uber - 20% Desconto</div>
+<div class="reward-description">Vale desconto para viagem Uber (até 5€)</div>
+<div class="reward-cost">⭐ 100 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(100, 'Uber 20% OFF')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="transport">
+<div class="reward-icon">🚕</div>
+<div class="reward-info">
+<div class="reward-title">Uber - 50% Desconto</div>
+<div class="reward-description">Vale desconto para viagem Uber (até 10€)</div>
+<div class="reward-cost">⭐ 200 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(200, 'Uber 50% OFF')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="transport">
+<div class="reward-icon">🚕</div>
+<div class="reward-info">
+<div class="reward-title">Uber - Viagem Grátis</div>
+<div class="reward-description">Viagem Uber totalmente grátis (até 15€)</div>
+<div class="reward-cost">⭐ 400 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(400, 'Uber Grátis')">Resgatar</button>
+</div>
+
+<!-- COMIDA -->
+<div class="reward-card" data-category="food">
+<div class="reward-icon">🍕</div>
+<div class="reward-info">
+<div class="reward-title">Uber Eats - 15% Desconto</div>
+<div class="reward-description">Desconto em qualquer pedido (até 5€)</div>
+<div class="reward-cost">⭐ 80 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(80, 'Uber Eats 15% OFF')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="food">
+<div class="reward-icon">🍔</div>
+<div class="reward-info">
+<div class="reward-title">McDonald's - 5€ Voucher</div>
+<div class="reward-description">Vale de 5€ para usar no McDonald's</div>
+<div class="reward-cost">⭐ 150 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(150, 'McDonald\'s 5€')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="food">
+<div class="reward-icon">☕</div>
+<div class="reward-info">
+<div class="reward-title">Starbucks - Bebida Grátis</div>
+<div class="reward-description">1 bebida grátis (tamanho Grande)</div>
+<div class="reward-cost">⭐ 100 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(100, 'Starbucks Bebida')">Resgatar</button>
+</div>
+
+<!-- ENTRETENIMENTO -->
+<div class="reward-card" data-category="entertainment">
+<div class="reward-icon">🎟️</div>
+<div class="reward-info">
+<div class="reward-title">Ticketline - 10€ Desconto</div>
+<div class="reward-description">10€ para usar em bilhetes de eventos</div>
+<div class="reward-cost">⭐ 300 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(300, 'Ticketline 10€')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="entertainment">
+<div class="reward-icon">🎟️</div>
+<div class="reward-info">
+<div class="reward-title">Ticketline - 20€ Desconto</div>
+<div class="reward-description">20€ para usar em bilhetes de festivais</div>
+<div class="reward-cost">⭐ 550 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(550, 'Ticketline 20€')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="entertainment">
+<div class="reward-icon">📚</div>
+<div class="reward-info">
+<div class="reward-title">FNAC - 15€ Voucher</div>
+<div class="reward-description">Vale de 15€ para livros, música ou tech</div>
+<div class="reward-cost">⭐ 450 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(450, 'FNAC 15€')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="entertainment">
+<div class="reward-icon">🎮</div>
+<div class="reward-info">
+<div class="reward-title">PlayStation Store - 10€</div>
+<div class="reward-description">Crédito de 10€ para jogos</div>
+<div class="reward-cost">⭐ 350 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(350, 'PSN 10€')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="entertainment">
+<div class="reward-icon">🎵</div>
+<div class="reward-info">
+<div class="reward-title">Spotify Premium - 1 Mês</div>
+<div class="reward-description">1 mês de Spotify Premium grátis</div>
+<div class="reward-cost">⭐ 250 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(250, 'Spotify 1 mês')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="entertainment">
+<div class="reward-icon">🎬</div>
+<div class="reward-info">
+<div class="reward-title">Cinema - 2 Bilhetes</div>
+<div class="reward-description">2 bilhetes para qualquer sessão</div>
+<div class="reward-cost">⭐ 400 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(400, 'Cinema 2 Bilhetes')">Resgatar</button>
+</div>
+
+<!-- EXPERIÊNCIAS -->
+<div class="reward-card" data-category="experiences">
+<div class="reward-icon">🎢</div>
+<div class="reward-info">
+<div class="reward-title">Parque Aventura - Entrada</div>
+<div class="reward-description">1 entrada para parque de aventura</div>
+<div class="reward-cost">⭐ 600 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(600, 'Parque Aventura')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="experiences">
+<div class="reward-icon">🏄</div>
+<div class="reward-info">
+<div class="reward-title">Aula de Surf</div>
+<div class="reward-description">1 aula de surf com instrutor (2h)</div>
+<div class="reward-cost">⭐ 800 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(800, 'Aula Surf')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="experiences">
+<div class="reward-icon">🧗</div>
+<div class="reward-info">
+<div class="reward-title">Escalada Indoor - Sessão</div>
+<div class="reward-description">Sessão de escalada + equipamento</div>
+<div class="reward-cost">⭐ 500 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(500, 'Escalada')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="experiences">
+<div class="reward-icon">🎨</div>
+<div class="reward-info">
+<div class="reward-title">Workshop Criativo</div>
+<div class="reward-description">Workshop de pintura ou cerâmica (3h)</div>
+<div class="reward-cost">⭐ 700 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(700, 'Workshop')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="experiences">
+<div class="reward-icon">💆</div>
+<div class="reward-info">
+<div class="reward-title">Massagem Relaxante</div>
+<div class="reward-description">Massagem de 60 minutos</div>
+<div class="reward-cost">⭐ 900 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(900, 'Massagem')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="experiences">
+<div class="reward-icon">🎪</div>
+<div class="reward-info">
+<div class="reward-title">Escape Room - Grupo</div>
+<div class="reward-description">Sessão para até 6 pessoas</div>
+<div class="reward-cost">⭐ 1.200 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(1200, 'Escape Room')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="experiences">
+<div class="reward-icon">🚁</div>
+<div class="reward-info">
+<div class="reward-title">Voo de Helicóptero</div>
+<div class="reward-description">Experiência de 15 minutos sobre a cidade</div>
+<div class="reward-cost">⭐ 3.000 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(3000, 'Helicóptero')">Resgatar</button>
+</div>
+
+<div class="reward-card" data-category="experiences">
+<div class="reward-icon">✈️</div>
+<div class="reward-info">
+<div class="reward-title">Weekend Europeu</div>
+<div class="reward-description">2 noites em cidade europeia (voos + hotel)</div>
+<div class="reward-cost">⭐ 5.000 pontos</div>
+</div>
+<button class="reward-btn" onclick="redeemReward(5000, 'Weekend Europeu')">Resgatar</button>
+</div>
+</div>
+</div>
+
+<!-- SOCIAL FEED SCREEN -->
+<div class="screen" id="social">
+<div class="section-title">💬 Histórias da Comunidade</div>
+
+<div class="info-box">
+<div class="info-box-title">✨ Partilha a Tua História</div>
+<div class="info-box-text">Este é um espaço seguro para partilhares experiências, aprendizagens e apoiares outros. Todas as histórias são anónimas se preferires.</div>
+</div>
+
+<div id="feedPosts">
+<!-- Post 1 -->
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div class="post-user-info">
+<div class="post-username">Maria Costa</div>
+<div class="post-time">Há 2 horas</div>
+</div>
+</div>
+<div class="post-content">
+Ontem usei a app pela primeira vez numa festa. O alerta de distância funcionou perfeitamente - afastei-me do grupo sem perceber e recebi notificação. Os meus amigos vieram ter comigo. Senti-me muito mais segura! 💚
+</div>
+<div class="post-actions">
+<div class="post-action" onclick="toggleLike(this)">
+<span>❤️</span>
+<span>47</span>
+</div>
+<div class="post-action">
+<span>💬</span>
+<span>12</span>
+</div>
+<div class="post-action">
+<span>🔄</span>
+<span>8</span>
+</div>
+</div>
+</div>
+
+<!-- Post 2 -->
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div class="post-user-info">
+<div class="post-username">Pedro Silva</div>
+<div class="post-time">Há 5 horas</div>
+</div>
+</div>
+<div class="post-content">
+Hoje completei 30 dias sem consumir álcool. Não foi fácil, mas a app ajudou-me a manter o foco. Os pontos de motivação podem parecer pequenos, mas fazem diferença. Para quem está a tentar, não desistam! 💪
+</div>
+<div class="post-actions">
+<div class="post-action" onclick="toggleLike(this)">
+<span>❤️</span>
+<span>156</span>
+</div>
+<div class="post-action">
+<span>💬</span>
+<span>34</span>
+</div>
+<div class="post-action">
+<span>🔄</span>
+<span>23</span>
+</div>
+</div>
+</div>
+
+<!-- Post 3 -->
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div class="post-user-info">
+<div class="post-username">Ana Oliveira</div>
+<div class="post-time">Há 1 dia</div>
+</div>
+</div>
+<div class="post-content">
+Nunca pensei que "ganhar pontos por beber água" fosse funcionar, mas funciona! 😂 Já bebi mais água ontem à noite que nos últimos 3 meses de festas. E acordei sem ressaca. Coincidência? Acho que não!
+</div>
+<div class="post-actions">
+<div class="post-action" onclick="toggleLike(this)">
+<span>❤️</span>
+<span>89</span>
+</div>
+<div class="post-action">
+<span>💬</span>
+<span>18</span>
+</div>
+<div class="post-action">
+<span>🔄</span>
+<span>15</span>
+</div>
+</div>
+</div>
+
+<!-- Post 4 -->
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div class="post-user-info">
+<div class="post-username">Rui Ferreira</div>
+<div class="post-time">Há 2 dias</div>
+</div>
+</div>
+<div class="post-content">
+História séria: há 2 semanas um amigo meu passou muito mal num festival. Usámos o botão SOS da app e a ambulância chegou em 8 minutos. O médico disse que se tivéssemos demorado mais 15-20 min podia ter sido grave. Esta app salvou literalmente uma vida. 🚑
+</div>
+<div class="post-actions">
+<div class="post-action" onclick="toggleLike(this)">
+<span>❤️</span>
+<span>312</span>
+</div>
+<div class="post-action">
+<span>💬</span>
+<span>67</span>
+</div>
+<div class="post-action">
+<span>🔄</span>
+<span>89</span>
+</div>
+</div>
+</div>
+
+<!-- Post 5 -->
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div class="post-user-info">
+<div class="post-username">Sofia Martins</div>
+<div class="post-time">Há 3 dias</div>
+</div>
+</div>
+<div class="post-content">
+Resgatei o meu primeiro prémio hoje! 🎉 Uber grátis para voltar a casa depois da festa. Gastei 400 pontos que juntei em 2 semanas a fazer coisas que já devia estar a fazer (beber água, não conduzir, etc). Genial!
+</div>
+<div class="post-actions">
+<div class="post-action" onclick="toggleLike(this)">
+<span>❤️</span>
+<span>73</span>
+</div>
+<div class="post-action">
+<span>💬</span>
+<span>21</span>
+</div>
+<div class="post-action">
+<span>🔄</span>
+<span>11</span>
+</div>
+</div>
+</div>
+
+<!-- Post 6 -->
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div class="post-user-info">
+<div class="post-username">João Santos</div>
+<div class="post-time">Há 4 dias</div>
+</div>
+</div>
+<div class="post-content">
+Para quem tem ansiedade como eu: a secção de substâncias ajudou-me IMENSO. Percebi finalmente porque é que misturar álcool com os meus antidepressivos me fazia sentir tão mal. Informação que nenhum médico me explicou tão bem. 📚
+</div>
+<div class="post-actions">
+<div class="post-action" onclick="toggleLike(this)">
+<span>❤️</span>
+<span>128</span>
+</div>
+<div class="post-action">
+<span>💬</span>
+<span>45</span>
+</div>
+<div class="post-action">
+<span>🔄</span>
+<span>32</span>
+</div>
+</div>
+</div>
+</div>
+
+<button class="new-post-btn" onclick="showNewPostModal()">✏️</button>
+</div>
+
+<!-- BUDDIES SCREEN -->
+<div class="screen" id="buddies">
+<div class="section-title">👥 O Meu Grupo</div>
+
+<div class="info-box">
+<div class="info-box-title">📍 Localização Partilhada</div>
+<div class="info-box-text">Todos os buddies estão a partilhar localização em tempo real. Serás alertado se alguém se afastar >500m.</div>
+</div>
+
+<div style="background: var(--bg-secondary); height: 250px; border-radius: 16px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border-color);">
+<div style="text-align: center; color: var(--text-tertiary);">
+<div style="font-size: 4rem; margin-bottom: 0.5rem;">🗺️</div>
+<div>Mapa em Tempo Real</div>
+<div style="font-size: 0.8rem; margin-top: 0.3rem;">Todos os buddies visíveis</div>
+</div>
+</div>
+
+<div class="section-title">👥 Membros do Grupo</div>
+
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div style="flex: 1;">
+<div class="post-username">Maria Costa</div>
+<div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem;">
+<span style="width: 8px; height: 8px; border-radius: 50%; background: #00ff88;"></span>
+<span style="font-size: 0.85rem; color: var(--text-tertiary);">Online agora</span>
+</div>
+</div>
+<div style="font-weight: 700; color: var(--accent-primary);">120m</div>
+</div>
+</div>
+
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div style="flex: 1;">
+<div class="post-username">Pedro Santos</div>
+<div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem;">
+<span style="width: 8px; height: 8px; border-radius: 50%; background: #00ff88;"></span>
+<span style="font-size: 0.85rem; color: var(--text-tertiary);">Online agora</span>
+</div>
+</div>
+<div style="font-weight: 700; color: var(--accent-primary);">85m</div>
+</div>
+</div>
+
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div style="flex: 1;">
+<div class="post-username">Ana Oliveira</div>
+<div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem;">
+<span style="width: 8px; height: 8px; border-radius: 50%; background: #00ff88;"></span>
+<span style="font-size: 0.85rem; color: var(--text-tertiary);">Online agora</span>
+</div>
+</div>
+<div style="font-weight: 700; color: var(--accent-primary);">340m</div>
+</div>
+</div>
+
+<div class="post-card" style="border-color: #ffaa00;">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div style="flex: 1;">
+<div class="post-username">Rui Ferreira</div>
+<div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; color: #ffaa00;">
+<span>⚠️</span>
+<span style="font-size: 0.85rem;">Afastou-se >500m</span>
+</div>
+</div>
+<div style="font-weight: 700; color: #ffaa00;">820m</div>
+</div>
+</div>
+
+<div class="post-card">
+<div class="post-header">
+<div class="post-avatar">👤</div>
+<div style="flex: 1;">
+<div class="post-username">Sofia Martins</div>
+<div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem;">
+<span style="width: 8px; height: 8px; border-radius: 50%; background: #00ff88;"></span>
+<span style="font-size: 0.85rem; color: var(--text-tertiary);">Online agora</span>
+</div>
+</div>
+<div style="font-weight: 700; color: var(--accent-primary);">45m</div>
+</div>
+</div>
+
+<button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="earnPoints(50, 'yellow')">
++ Adicionar Buddy (+50pts ⭐)
+</button>
+</div>
+
+<!-- SUBSTANCES SCREEN -->
+<div class="screen" id="substances">
+<div class="section-title">💊 Info sobre Substâncias</div>
+
+<!-- AI Chat Button -->
+<div class="action-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: white; border: none;" onclick="openAIChat()">
+<div class="action-icon">🤖</div>
+<div class="action-title" style="color: white;">Chat de Dúvidas</div>
+<div class="action-subtitle" style="color: rgba(255,255,255,0.9);">Pergunta rápida sobre substâncias</div>
+</div>
+
+<div class="info-box">
+<div class="info-box-title">⚠️ Aviso Importante</div>
+<div class="info-box-text">Esta informação é educativa e baseia-se em harm reduction. Não promovemos o consumo de substâncias. Se consumires, fá-lo de forma informada.</div>
+</div>
+
+<!-- Substance Card: Álcool -->
+<div class="post-card">
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color);">
+<div style="font-size: 3rem;">🍺</div>
+<div style="flex: 1;">
+<div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Álcool</div>
+<div style="font-size: 0.85rem; color: var(--text-tertiary);">Depressor do sistema nervoso central</div>
+</div>
+</div>
+
+<div style="margin-bottom: 1rem;">
+<div style="color: #00ff88; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">✓ EFEITOS</div>
+<ul style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1.2rem; line-height: 1.6;">
+<li>Desinibição social e euforia inicial</li>
+<li>Relaxamento muscular</li>
+<li>Descoordenação motora progressiva</li>
+<li>Comprometimento de julgamento</li>
+</ul>
+</div>
+
+<div style="margin-bottom: 1rem;">
+<div style="color: #ffaa00; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">⚠️ RISCOS</div>
+<ul style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1.2rem; line-height: 1.6;">
+<li>Desidratação severa</li>
+<li>Intoxicação aguda (vómitos, inconsciência)</li>
+<li>Ressaca (náuseas, dor de cabeça)</li>
+<li>Comportamentos de risco</li>
+<li>Depressão respiratória em doses altas</li>
+</ul>
+</div>
+
+<div style="background: rgba(0, 255, 136, 0.1); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #00ff88;">
+<div style="color: #00ff88; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.3rem;">💡 HARM REDUCTION</div>
+<div style="color: var(--text-secondary); font-size: 0.8rem; line-height: 1.5;">
+• Bebe água alternadamente (1 copo água por bebida)<br>
+• Come antes e durante<br>
+• Ritmo: máximo 1 bebida/hora<br>
+• Evita shots e misturas
+</div>
+</div>
+</div>
+
+<!-- Substance Card: Cannabis -->
+<div class="post-card">
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color);">
+<div style="font-size: 3rem;">🌿</div>
+<div style="flex: 1;">
+<div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Cannabis</div>
+<div style="font-size: 0.85rem; color: var(--text-tertiary);">THC - Canabinóide psicoativo</div>
+</div>
+</div>
+
+<div style="margin-bottom: 1rem;">
+<div style="color: #00ff88; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">✓ EFEITOS</div>
+<ul style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1.2rem; line-height: 1.6;">
+<li>Relaxamento e euforia</li>
+<li>Alteração da percepção do tempo</li>
+<li>Aumento do apetite</li>
+<li>Sensação de "lentidão"</li>
+</ul>
+</div>
+
+<div style="margin-bottom: 1rem;">
+<div style="color: #ffaa00; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">⚠️ RISCOS</div>
+<ul style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1.2rem; line-height: 1.6;">
+<li>Ansiedade e paranoia (especialmente doses altas)</li>
+<li>Comprometimento de memória de curto prazo</li>
+<li>Descoordenação motora</li>
+<li>Problemas respiratórios (se fumada)</li>
+<li>"Whitey" se misturada com álcool</li>
+</ul>
+</div>
+
+<div style="background: rgba(0, 255, 136, 0.1); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #00ff88;">
+<div style="color: #00ff88; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.3rem;">💡 HARM REDUCTION</div>
+<div style="color: var(--text-secondary); font-size: 0.8rem; line-height: 1.5;">
+• Começa com doses baixas (especialmente edibles)<br>
+• Não mistures com álcool (risco de whitey)<br>
+• Ambiente seguro e confortável<br>
+• Evita se tens historial de ansiedade/psicose
+</div>
+</div>
+</div>
+
+<!-- Substance Card: MDMA -->
+<div class="post-card">
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color);">
+<div style="font-size: 3rem;">💊</div>
+<div style="flex: 1;">
+<div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">MDMA / Ecstasy</div>
+<div style="font-size: 0.85rem; color: var(--text-tertiary);">Estimulante + empatogénico</div>
+</div>
+</div>
+
+<div style="margin-bottom: 1rem;">
+<div style="color: #00ff88; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">✓ EFEITOS</div>
+<ul style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1.2rem; line-height: 1.6;">
+<li>Euforia intensa</li>
+<li>Empatia e conexão social aumentadas</li>
+<li>Energia e vontade de dançar</li>
+<li>Sensibilidade sensorial aumentada</li>
+</ul>
+</div>
+
+<div style="margin-bottom: 1rem;">
+<div style="color: #ff3366; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">🚨 RISCOS SÉRIOS</div>
+<ul style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1.2rem; line-height: 1.6;">
+<li><strong>Hipertermia</strong> (temperatura corporal >40°C - pode ser fatal)</li>
+<li><strong>Desidratação severa</strong></li>
+<li>Exaustão por dançar horas sem parar</li>
+<li>Neurotoxicidade (especialmente uso frequente)</li>
+<li>"Comedown" (depressão dias depois)</li>
+<li>Risco de comprimidos adulterados</li>
+</ul>
+</div>
+
+<div style="background: rgba(255, 51, 102, 0.1); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #ff3366;">
+<div style="color: #ff3366; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.3rem;">💡 HARM REDUCTION CRÍTICO</div>
+<div style="color: var(--text-secondary); font-size: 0.8rem; line-height: 1.5;">
+• <strong>ÁGUA:</strong> 500ml por hora (não mais!)<br>
+• <strong>PAUSAS:</strong> Para de dançar cada 30-45min<br>
+• <strong>TEMPERATURA:</strong> Vai para zona fresca regularmente<br>
+• <strong>DOSE:</strong> 1-1.5mg/kg (máx. 120mg) - NÃO redoses<br>
+• <strong>TEST KIT:</strong> Testa sempre o comprimido<br>
+• <strong>NÃO MISTURES</strong> com álcool ou outros estimulantes
+</div>
+</div>
+</div>
+
+<!-- Substance Card: Cocaína -->
+<div class="post-card">
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color);">
+<div style="font-size: 3rem;">❄️</div>
+<div style="flex: 1;">
+<div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Cocaína</div>
+<div style="font-size: 0.85rem; color: var(--text-tertiary);">Estimulante potente</div>
+</div>
+</div>
+
+<div style="margin-bottom: 1rem;">
+<div style="color: #00ff88; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">✓ EFEITOS</div>
+<ul style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1.2rem; line-height: 1.6;">
+<li>Euforia intensa mas breve (15-30min)</li>
+<li>Energia e confiança aumentadas</li>
+<li>Sociabilidade</li>
+<li>Supressão de apetite e sono</li>
+</ul>
+</div>
+
+<div style="margin-bottom: 1rem;">
+<div style="color: #ff3366; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">🚨 RISCOS MUITO SÉRIOS</div>
+<ul style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1.2rem; line-height: 1.6;">
+<li><strong>Problemas cardíacos</strong> (arritmia, AVC, enfarte)</li>
+<li>Ansiedade e paranoia intensa</li>
+<li>Potencial aditivo muito elevado</li>
+<li>Danos nasais (se esnifada)</li>
+<li>Crash severo após efeito</li>
+</ul>
+</div>
+
+<div style="background: rgba(255, 51, 102, 0.1); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #ff3366;">
+<div style="color: #ff3366; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.3rem;">💡 HARM REDUCTION</div>
+<div style="color: var(--text-secondary); font-size: 0.8rem; line-height: 1.5;">
+• <strong>NUNCA mistures com álcool</strong> (cria cocaetileno - muito tóxico)<br>
+• Doses pequenas, espera entre linhas<br>
+• Hidratação constante<br>
+• Evita se tens problemas cardíacos<br>
+• Alto risco de dependência - usa raramente
+</div>
+</div>
+</div>
+
+<!-- Dangerous Mixtures -->
+<div class="post-card" style="border: 2px solid #ff3366; background: rgba(255, 51, 102, 0.05);">
+<div style="text-align: center; margin-bottom: 1rem;">
+<div style="font-size: 3rem; margin-bottom: 0.5rem;">☠️</div>
+<div style="font-size: 1.3rem; font-weight: 700; color: #ff3366;">MISTURAS PERIGOSAS</div>
+<div style="font-size: 0.85rem; color: var(--text-tertiary); margin-top: 0.3rem;">NUNCA mistures estas substâncias</div>
+</div>
+
+<div style="margin-bottom: 1rem;">
+<div style="background: var(--bg-tertiary); padding: 0.8rem; border-radius: 8px; margin-bottom: 0.8rem;">
+<div style="font-weight: 700; color: #ff3366; margin-bottom: 0.3rem;">🍺 + 💊 Álcool + MDMA</div>
+<div style="font-size: 0.85rem; color: var(--text-secondary);">
+<strong>Risco:</strong> Desidratação extrema, sobrecarga hepática<br>
+<strong>Porque:</strong> Ambos desidratam; álcool reduz percepção de hipertermia
+</div>
+</div>
+
+<div style="background: var(--bg-tertiary); padding: 0.8rem; border-radius: 8px; margin-bottom: 0.8rem;">
+<div style="font-weight: 700; color: #ff3366; margin-bottom: 0.3rem;">🍺 + ❄️ Álcool + Cocaína</div>
+<div style="font-size: 0.85rem; color: var(--text-secondary);">
+<strong>Risco:</strong> Cria cocaetileno (metabolito muito tóxico)<br>
+<strong>Porque:</strong> Sobrecarga cardíaca e hepática extrema
+</div>
+</div>
+
+<div style="background: var(--bg-tertiary); padding: 0.8rem; border-radius: 8px; margin-bottom: 0.8rem;">
+<div style="font-weight: 700; color: #ff3366; margin-bottom: 0.3rem;">🍺 + 🌿 Álcool + Cannabis</div>
+<div style="font-size: 0.85rem; color: var(--text-secondary);">
+<strong>Risco:</strong> "Whitey" (náuseas, vómitos, tonturas extremas)<br>
+<strong>Porque:</strong> Potenciação de efeitos depressores
+</div>
+</div>
+
+<div style="background: var(--bg-tertiary); padding: 0.8rem; border-radius: 8px;">
+<div style="font-weight: 700; color: #ff3366; margin-bottom: 0.3rem;">💊 MDMA + Antidepressivos (ISRS)</div>
+<div style="font-size: 0.85rem; color: var(--text-secondary);">
+<strong>Risco:</strong> Síndrome serotoninérgica (pode ser fatal)<br>
+<strong>Porque:</strong> Excesso perigoso de serotonina
+</div>
+</div>
+</div>
+</div>
+
+<!-- Resources -->
+<div class="info-box" style="margin-top: 1.5rem;">
+<div class="info-box-title">📞 Recursos Úteis</div>
+<div class="info-box-text">
+<strong>SNS24:</strong> 808 24 24 24<br>
+<strong>Linha Vida:</strong> 1414 (apoio em crise)<br>
+<strong>SICAD:</strong> Informação sobre substâncias<br>
+<strong>Reagent Tests Portugal:</strong> Compra test kits online
+</div>
+</div>
+</div>
+
+<!-- SETTINGS SCREEN -->
+<div class="screen" id="settings">
+<div class="section-title">⚙️ Definições</div>
+
+<div class="settings-group">
+<div class="settings-title">🎨 Tema da Aplicação</div>
+<div class="theme-selector">
+<div class="theme-option theme-dark active" onclick="changeTheme('dark')">
+<div style="font-size: 2rem; margin-bottom: 0.5rem;">🌙</div>
+<div style="font-size: 0.85rem; color: white;">Escuro</div>
+</div>
+<div class="theme-option theme-light" onclick="changeTheme('light')">
+<div style="font-size: 2rem; margin-bottom: 0.5rem;">☀️</div>
+<div style="font-size: 0.85rem; color: #1a202c;">Claro</div>
+</div>
+<div class="theme-option theme-purple" onclick="changeTheme('purple')">
+<div style="font-size: 2rem; margin-bottom: 0.5rem;">💜</div>
+<div style="font-size: 0.85rem; color: white;">Roxo</div>
+</div>
+<div class="theme-option theme-green" onclick="changeTheme('green')">
+<div style="font-size: 2rem; margin-bottom: 0.5rem;">💚</div>
+<div style="font-size: 0.85rem; color: white;">Verde</div>
+</div>
+</div>
+</div>
+
+<div class="settings-group">
+<div class="settings-title">🔔 Notificações</div>
+<div class="settings-option">
+<span>Alertas de Afastamento</span>
+<span style="color: var(--accent-primary);">✓ Ativo</span>
+</div>
+<div class="settings-option">
+<span>Lembretes de Hidratação</span>
+<span style="color: var(--accent-primary);">✓ Ativo</span>
+</div>
+<div class="settings-option">
+<span>Atualizações de Buddies</span>
+<span style="color: var(--accent-primary);">✓ Ativo</span>
+</div>
+</div>
+
+<div class="settings-group">
+<div class="settings-title">🔒 Privacidade</div>
+<div class="settings-option">
+<span>Partilhar Localização</span>
+<span style="color: var(--accent-primary);">✓ Ativo</span>
+</div>
+<div class="settings-option">
+<span>Perfil Público</span>
+<span style="color: var(--text-tertiary);">✗ Desativo</span>
+</div>
+</div>
+
+<div class="settings-group">
+<div class="settings-title">ℹ️ Sobre</div>
+<div class="settings-option">
+<span>Versão</span>
+<span style="color: var(--text-tertiary);">1.0.0</span>
+</div>
+<div class="settings-option">
+<span>Termos e Condições</span>
+<span style="color: var(--accent-primary);">→</span>
+</div>
+<div class="settings-option">
+<span>Política de Privacidade</span>
+<span style="color: var(--accent-primary);">→</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+<div class="nav-item active" onclick="showScreen('home')">
+<div class="nav-icon">🏠</div>
+<div class="nav-label">Início</div>
+</div>
+<div class="nav-item" onclick="showScreen('rewards')">
+<div class="nav-icon">🏪</div>
+<div class="nav-label">Prémios</div>
+</div>
+<div class="nav-item" onclick="showScreen('social')">
+<div class="nav-icon">💬</div>
+<div class="nav-label">Comunidade</div>
+</div>
+<div class="nav-item" onclick="showScreen('buddies')">
+<div class="nav-icon">👥</div>
+<div class="nav-label">Buddies</div>
+</div>
+<div class="nav-item" onclick="showScreen('substances')">
+<div class="nav-icon">💊</div>
+<div class="nav-label">Info</div>
+</div>
+</div>
+
+<!-- Emergency Modal -->
+<div class="modal" id="emergencyModal">
+<div class="modal-content">
+<div class="modal-title">🚨 Emergência 112</div>
+<div class="modal-text">
+Vais ser redirecionado para ligar 112 (emergência médica).
+<br><br>
+Os teus buddies serão notificados automaticamente com a tua localização.
+</div>
+<div class="modal-actions">
+<button class="btn btn-secondary" onclick="closeModal('emergencyModal')">Cancelar</button>
+<button class="btn btn-primary" onclick="call112()">Ligar 112</button>
+</div>
+</div>
+</div>
+
+<!-- Reward Modal -->
+<div class="modal" id="rewardModal">
+<div class="modal-content">
+<div class="modal-title">🎉 Prémio Resgatado!</div>
+<div class="modal-text" id="rewardModalText"></div>
+<div class="modal-actions">
+<button class="btn btn-primary" onclick="closeModal('rewardModal')" style="width: 100%;">Fechar</button>
+</div>
+</div>
+</div>
+
+<!-- Insufficient Points Modal -->
+<div class="modal" id="insufficientModal">
+<div class="modal-content">
+<div class="modal-title">⚠️ Pontos Insuficientes</div>
+<div class="modal-text" id="insufficientModalText"></div>
+<div class="modal-actions">
+<button class="btn btn-primary" onclick="closeModal('insufficientModal')" style="width: 100%;">Fechar</button>
+</div>
+</div>
+</div>
+
+<!-- New Post Modal -->
+<div class="modal" id="newPostModal">
+<div class="modal-content">
+<div class="modal-title">✏️ Nova História</div>
+<div class="modal-text">
+<textarea style="width: 100%; min-height: 150px; padding: 1rem; border-radius: 12px; background: var(--bg-tertiary); border: 2px solid var(--border-color); color: var(--text-primary); font-family: 'Work Sans', sans-serif; resize: vertical;" placeholder="Partilha a tua história..."></textarea>
+</div>
+<div class="modal-actions">
+<button class="btn btn-secondary" onclick="closeModal('newPostModal')">Cancelar</button>
+<button class="btn btn-primary" onclick="publishPost()">Publicar</button>
+</div>
+</div>
+</div>
+
+<!-- AI Chat Modal -->
+<div class="modal" id="aiChatModal">
+<div class="modal-content" style="max-width: 500px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+<div class="modal-title" style="margin: 0;">🤖 Chat de Dúvidas</div>
+<button class="icon-btn" onclick="closeModal('aiChatModal')" style="font-size: 1.5rem;">✕</button>
+</div>
+
+<div style="background: rgba(0, 242, 254, 0.1); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
+Faz perguntas sobre substâncias, misturas, contextos e harm reduction. Informação baseada em evidência científica.
+</div>
+
+<!-- Quick Questions -->
+<div style="margin-bottom: 1rem;">
+<div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-tertiary);">Perguntas Rápidas:</div>
+<div style="display: flex; flex-direction: column; gap: 0.5rem;">
+<button class="filter-tab" onclick="askAI('mdma-festival')" style="text-align: left; white-space: normal; padding: 0.8rem;">
+Quero experimentar MDMA num festival, é seguro?
+</button>
+<button class="filter-tab" onclick="askAI('alcohol-cannabis')" style="text-align: left; white-space: normal; padding: 0.8rem;">
+Posso misturar álcool com cannabis?
+</button>
+<button class="filter-tab" onclick="askAI('mdma-antidepressants')" style="text-align: left; white-space: normal; padding: 0.8rem;">
+Tomo antidepressivos, posso usar MDMA?
+</button>
+<button class="filter-tab" onclick="askAI('cocaine-alcohol')" style="text-align: left; white-space: normal; padding: 0.8rem;">
+É perigoso misturar cocaína com álcool?
+</button>
+<button class="filter-tab" onclick="askAI('overdose-signs')" style="text-align: left; white-space: normal; padding: 0.8rem;">
+Como identifico uma overdose de MDMA?
+</button>
+</div>
+</div>
+
+<!-- Chat Messages Container -->
+<div id="chatMessages" style="flex: 1; overflow-y: auto; margin-bottom: 1rem; min-height: 200px; max-height: 400px; padding: 0.5rem;">
+<!-- Messages will appear here -->
+</div>
+
+<!-- Input -->
+<div style="display: flex; gap: 0.5rem;">
+<input type="text" id="chatInput" placeholder="Escreve a tua pergunta..." style="flex: 1; padding: 0.8rem; border-radius: 12px; background: var(--bg-tertiary); border: 2px solid var(--border-color); color: var(--text-primary); font-family: 'Work Sans', sans-serif;" onkeypress="if(event.key==='Enter') sendChatMessage()">
+<button class="btn btn-primary" onclick="sendChatMessage()" style="padding: 0.8rem 1.5rem;">Enviar</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// State
+let yellowPoints = 450;
+let greenPoints = 1235;
+let currentTheme = 'dark';
+
+// Navigation
+function showScreen(screenId) {
+document.querySelectorAll('.screen').forEach(screen => {
+screen.classList.remove('active');
+});
+document.getElementById(screenId).classList.add('active');
+
+document.querySelectorAll('.nav-item').forEach(item => {
+item.classList.remove('active');
+});
+event.currentTarget.classList.add('active');
+}
+
+// Points System
+function earnPoints(amount, type) {
+if (type === 'yellow') {
+yellowPoints += amount;
+document.getElementById('yellowPoints').textContent = yellowPoints;
+showNotification(`+${amount} pontos amarelos! ⭐`, 'success');
+} else {
+greenPoints += amount;
+document.getElementById('greenPoints').textContent = greenPoints;
+showNotification(`+${amount} pontos verdes! 💚`, 'success');
+}
+}
+
+// Redeem Rewards
+function redeemReward(cost, rewardName) {
+if (yellowPoints >= cost) {
+yellowPoints -= cost;
+document.getElementById('yellowPoints').textContent = yellowPoints;
+document.getElementById('rewardModalText').innerHTML = `
+Resgataste com sucesso: <strong>${rewardName}</strong>
+<br><br>
+O teu código/voucher foi enviado para o email registado.
+<br><br>
+Pontos gastos: <strong style="color: #ffd700;">${cost} ⭐</strong>
+`;
+document.getElementById('rewardModal').classList.add('active');
+} else {
+const missing = cost - yellowPoints;
+document.getElementById('insufficientModalText').innerHTML = `
+Precisas de mais <strong style="color: #ffd700;">${missing} pontos amarelos</strong> para resgatar este prémio.
+<br><br>
+Continua a ganhar pontos através de comportamentos seguros!
+`;
+document.getElementById('insufficientModal').classList.add('active');
+}
+}
+
+// Filter Rewards
+function filterRewards(category) {
+const rewards = document.querySelectorAll('.reward-card');
+const tabs = document.querySelectorAll('.filter-tab');
+
+tabs.forEach(tab => tab.classList.remove('active'));
+event.currentTarget.classList.add('active');
+
+rewards.forEach(reward => {
+if (category === 'all' || reward.dataset.category === category) {
+reward.style.display = 'flex';
+} else {
+reward.style.display = 'none';
+}
+});
+}
+
+// Theme Changer
+function changeTheme(theme) {
+document.body.className = '';
+if (theme !== 'dark') {
+document.body.classList.add(`${theme}-mode`);
+}
+currentTheme = theme;
+
+document.querySelectorAll('.theme-option').forEach(option => {
+option.classList.remove('active');
+});
+// Update settings page theme selector if exists
+const themeOptions = document.querySelectorAll('.theme-option');
+themeOptions.forEach(option => {
+if (option.classList.contains(`theme-${theme}`)) {
+option.classList.add('active');
+}
+});
+}
+
+// Cycle through themes with header button
+function cycleTheme() {
+const themes = ['dark', 'light', 'purple', 'green'];
+const currentIndex = themes.indexOf(currentTheme);
+const nextIndex = (currentIndex + 1) % themes.length;
+const nextTheme = themes[nextIndex];
+
+changeTheme(nextTheme);
+
+// Visual feedback
+const btn = document.getElementById('themeToggleBtn');
+btn.style.transform = 'rotate(360deg)';
+setTimeout(() => {
+btn.style.transform = 'rotate(0deg)';
+}, 300);
+}
+
+// Modals
+function showEmergencyModal() {
+document.getElementById('emergencyModal').classList.add('active');
+}
+
+function showNewPostModal() {
+document.getElementById('newPostModal').classList.add('active');
+}
+
+function closeModal(modalId) {
+document.getElementById(modalId).classList.remove('active');
+}
+
+function call112() {
+alert('Em produção, isto faria uma chamada real para 112 e alertaria os teus buddies.');
+closeModal('emergencyModal');
+}
+
+function publishPost() {
+showNotification('História publicada com sucesso! 💚', 'success');
+closeModal('newPostModal');
+}
+
+// Social Features
+function toggleLike(element) {
+element.classList.toggle('liked');
+const countSpan = element.querySelector('span:last-child');
+let count = parseInt(countSpan.textContent);
+countSpan.textContent = element.classList.contains('liked') ? count + 1 : count - 1;
+}
+
+// Notifications
+function showNotifications() {
+alert('Notificações:\n\n• Maria Costa está perto de ti (120m)\n• Completaste 10 fotos de água! 🏆\n• Novo prémio disponível: Cinema 2 Bilhetes');
+}
+
+function showNotification(message, type) {
+// Simple alert for prototype - in production would be a toast notification
+alert(message);
+}
+
+// AI Chat Functions
+function openAIChat() {
+document.getElementById('aiChatModal').classList.add('active');
+// Clear previous messages
+document.getElementById('chatMessages').innerHTML = `
+<div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 12px; margin-bottom: 0.8rem;">
+<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+<span style="font-size: 1.5rem;">🤖</span>
+<span style="font-weight: 700; color: var(--accent-primary);">PartyCheck AI</span>
+</div>
+<div style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">
+Olá! Sou o assistente de harm reduction da PartyCheck. Posso responder a perguntas sobre substâncias, misturas perigosas, e como reduzir riscos em diferentes contextos. Como posso ajudar?
+</div>
+</div>
+`;
+}
+
+function askAI(questionType) {
+const questions = {
+'mdma-festival': 'Quero experimentar MDMA num festival, é seguro?',
+'alcohol-cannabis': 'Posso misturar álcool com cannabis?',
+'mdma-antidepressants': 'Tomo antidepressivos, posso usar MDMA?',
+'cocaine-alcohol': 'É perigoso misturar cocaína com álcool?',
+'overdose-signs': 'Como identifico uma overdose de MDMA?'
+};
+
+const question = questions[questionType];
+addChatMessage(question, 'user');
+
+setTimeout(() => {
+const response = getAIResponse(questionType);
+addChatMessage(response, 'ai');
+}, 800);
+}
+
+function sendChatMessage() {
+const input = document.getElementById('chatInput');
+const message = input.value.trim();
+
+if (message) {
+addChatMessage(message, 'user');
+input.value = '';
+
+setTimeout(() => {
+addChatMessage('Esta é uma versão de demonstração. Numa app real, esta IA seria alimentada por uma base de dados completa e atualizada sobre harm reduction. Por agora, usa as perguntas rápidas acima para ver exemplos de respostas!', 'ai');
+}, 800);
+}
+}
+
+function addChatMessage(message, sender) {
+const chatMessages = document.getElementById('chatMessages');
+const isAI = sender === 'ai';
+
+const messageDiv = document.createElement('div');
+messageDiv.style.cssText = `
+background: ${isAI ? 'var(--bg-tertiary)' : 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))'};
+padding: 1rem;
+border-radius: 12px;
+margin-bottom: 0.8rem;
+${isAI ? '' : 'margin-left: 2rem;'}
+${isAI ? 'margin-right: 2rem;' : ''}
+`;
+
+if (isAI) {
+messageDiv.innerHTML = `
+<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+<span style="font-size: 1.2rem;">🤖</span>
+<span style="font-weight: 700; color: var(--accent-primary); font-size: 0.85rem;">PartyCheck AI</span>
+</div>
+<div style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">${message}</div>
+`;
+} else {
+messageDiv.innerHTML = `
+<div style="color: white; font-size: 0.9rem; line-height: 1.5;">${message}</div>
+`;
+}
+
+chatMessages.appendChild(messageDiv);
+chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function getAIResponse(questionType) {
+const responses = {
+'mdma-festival': `
+<strong style="color: var(--accent-primary);">⚠️ MDMA em Festival: Riscos e Harm Reduction</strong><br><br>
+
+<strong>Contexto:</strong> Festivais são ambientes de ALTO RISCO para MDMA devido a:<br>
+• Calor extremo<br>
+• Multidões (dificulta arrefecimento)<br>
+• Dança prolongada<br>
+• Acesso limitado a água<br><br>
+
+<strong style="color: #ff3366;">Risco Principal: HIPERTERMIA</strong><br>
+A temperatura corporal pode subir para >40°C, o que pode ser FATAL.<br><br>
+
+<strong style="color: #00ff88;">Se decidires usar, REDUZ RISCOS:</strong><br>
+1. <strong>DOSE BAIXA:</strong> Máximo 1-1.5mg/kg (se pesas 70kg = máx. 105mg)<br>
+2. <strong>ÁGUA:</strong> 500ml por hora (NÃO MAIS! Excesso também é perigoso)<br>
+3. <strong>PAUSAS:</strong> Para de dançar a cada 30min, vai para zona fresca<br>
+4. <strong>BUDDIES:</strong> Mantém grupo informado, vigiem-se mutuamente<br>
+5. <strong>TEST KIT:</strong> SEMPRE testa o comprimido (muitos são adulterados)<br>
+6. <strong>NÃO ÁLCOOL:</strong> Zero álcool com MDMA<br>
+7. <strong>SINAIS ALERTA:</strong> Confusão, convulsões, temperatura muito alta = 112 IMEDIATO<br><br>
+
+<strong>Alternativa Mais Segura:</strong> Se é primeira vez, considera contexto menos arriscado (clube com AC, não festival ao sol).<br><br>
+
+<strong>Lembra-te:</strong> Nenhum uso é 100% seguro. Esta informação é para REDUZIR riscos, não eliminá-los.
+`,
+
+'alcohol-cannabis': `
+<strong style="color: var(--accent-primary);">🍺 + 🌿 Álcool + Cannabis: O "Whitey"</strong><br><br>
+
+<strong style="color: #ffaa00;">⚠️ MISTURA PROBLEMÁTICA</strong><br><br>
+
+<strong>O que acontece:</strong><br>
+Álcool aumenta absorção de THC → efeitos muito mais intensos e imprevisíveis.<br><br>
+
+<strong style="color: #ff3366;">Sintomas "Whitey":</strong><br>
+• Náuseas intensas e vómitos<br>
+• Tonturas extremas<br>
+• Palidez (daí "white")<br>
+• Suores frios<br>
+• Ansiedade/paranoia severa<br>
+• Possível desmaio<br><br>
+
+<strong>Risco:</strong> Moderado a Alto (raramente fatal mas MUITO desconfortável)<br><br>
+
+<strong style="color: #00ff88;">Harm Reduction:</strong><br>
+1. <strong>ORDEM IMPORTA:</strong> Se fores fazer, "grass before beer" (cannabis antes de álcool é menos mau)<br>
+2. <strong>DOSES BAIXAS:</strong> Muito menos de cada que usarias sozinho<br>
+3. <strong>ÁGUA:</strong> Hidratação constante<br>
+4. <strong>COMIDA:</strong> Estômago cheio reduz absorção<br>
+5. <strong>Se Whitey acontecer:</strong> Deita-te, posição lateral, água, ar fresco, espera passar (30-60min)<br><br>
+
+<strong>Recomendação:</strong> Idealmente, escolhe uma OU outra, não ambas. Se misturares, sê extremamente cauteloso com quantidades.
+`,
+
+'mdma-antidepressants': `
+<strong style="color: #ff3366;">🚨 MDMA + Antidepressivos: COMBINAÇÃO PERIGOSA</strong><br><br>
+
+<strong style="color: #ff3366;">⛔ NÃO USES MDMA SE TOMAS ISRS/IRSN</strong><br><br>
+
+<strong>Antidepressivos incluem:</strong><br>
+• SSRIs: Fluoxetina (Prozac), Sertralina (Zoloft), Escitalopram, Paroxetina<br>
+• SNRIs: Venlafaxina, Duloxetina<br>
+• MAOIs: Fenelzina, Tranilcipromina<br><br>
+
+<strong style="color: #ff3366;">RISCO: SÍNDROME SEROTONINÉRGICA</strong><br>
+Ambos aumentam serotonina → sobrecarga perigosa<br><br>
+
+<strong>Sintomas (EMERGÊNCIA MÉDICA):</strong><br>
+• Agitação extrema<br>
+• Confusão mental<br>
+• Frequência cardíaca muito elevada<br>
+• Hipertensão<br>
+• Febre alta<br>
+• Convulsões<br>
+• Rigidez muscular<br>
+→ PODE SER FATAL<br><br>
+
+<strong>Outros Problemas:</strong><br>
+• SSRIs BLOQUEIAM efeitos de MDMA (não vais sentir nada OU vais sentir só efeitos negativos)<br>
+• Tentação de usar mais dose = risco aumentado<br><br>
+
+<strong style="color: #00ff88;">O que fazer:</strong><br>
+1. <strong>NÃO uses MDMA</strong> enquanto tomas antidepressivos<br>
+2. Se parares antidepressivos, espera <strong>MÍNIMO 2 semanas</strong> (melhor 4-6)<br>
+3. <strong>NUNCA pares antidepressivos</strong> só para usar MDMA - riscos de saúde mental são maiores<br>
+4. Fala com médico/psiquiatra se estás a considerar isto<br><br>
+
+<strong>Alternativas:</strong> Se precisas de antidepressivos, a tua saúde mental é prioridade. MDMA não vale o risco.
+`,
+
+'cocaine-alcohol': `
+<strong style="color: #ff3366;">☠️ COCAÍNA + ÁLCOOL: MISTURA LETAL</strong><br><br>
+
+<strong style="color: #ff3366;">⛔ EXTREMAMENTE PERIGOSO - EVITA SEMPRE</strong><br><br>
+
+<strong>O que acontece quimicamente:</strong><br>
+Cocaína + Álcool reagem no fígado criando <strong>COCAETILENO</strong><br><br>
+
+<strong style="color: #ff3366;">COCAETILENO:</strong><br>
+• Metabolito tóxico<br>
+• 18-25x mais letal que cocaína sozinha<br>
+• Permanece no corpo muito mais tempo<br>
+• Sobrecarga cardíaca e hepática extrema<br><br>
+
+<strong>Riscos Imediatos:</strong><br>
+• Arritmia cardíaca<br>
+• Enfarte do miocárdio<br>
+• AVC<br>
+• Convulsões<br>
+• Morte súbita<br><br>
+
+<strong>Riscos Adicionais:</strong><br>
+• Cocaína é estimulante, álcool é depressor → corpo em conflito<br>
+• Álcool mascara efeitos de cocaína → tendência para usar MAIS<br>
+• Danos hepáticos cumulativos<br>
+• Comportamentos violentos mais prováveis<br><br>
+
+<strong style="color: #00ff88;">Harm Reduction:</strong><br>
+<strong>A ÚNICA estratégia segura é NÃO MISTURAR. NUNCA.</strong><br><br>
+
+Se já misturaste:<br>
+• Não uses mais de nenhuma<br>
+• Hidrata-te<br>
+• Monitoriza sintomas cardíacos<br>
+• Se sentires dor no peito, confusão, tonturas extremas → 112 IMEDIATO<br><br>
+
+<strong>Estatística:</strong> Esta mistura está envolvida em >60% das mortes relacionadas com cocaína.<br><br>
+
+Não vale o risco. Se fores usar cocaína (já de si arriscado), fá-lo ZERO álcool.
+`,
+
+'overdose-signs': `
+<strong style="color: #ff3366;">🚨 SINAIS DE OVERDOSE DE MDMA: RECONHECER E AGIR</strong><br><br>
+
+<strong style="color: #ff3366;">SINAIS DE ALERTA - EMERGÊNCIA 112:</strong><br><br>
+
+<strong>1. HIPERTERMIA (Mais Comum):</strong><br>
+• Temperatura corporal >40°C<br>
+• Pele muito quente ao toque<br>
+• Deixou de suar (mau sinal!)<br>
+• Confusão mental severa<br>
+• Fala arrastada/incoerente<br>
+• Perda de consciência<br><br>
+
+<strong>2. SÍNDROME SEROTONINÉRGICA:</strong><br>
+• Agitação extrema<br>
+• Rigidez muscular<br>
+• Tremores incontroláveis<br>
+• Pupilas muito dilatadas<br>
+• Frequência cardíaca >120bpm em repouso<br><br>
+
+<strong>3. CONVULSÕES:</strong><br>
+• Espasmos musculares violentos<br>
+• Perda de consciência<br>
+• Pode morder língua<br><br>
+
+<strong>4. COLAPSO CARDIOVASCULAR:</strong><br>
+• Dor no peito<br>
+• Dificuldade em respirar<br>
+• Lábios/extremidades azulados<br>
+• Pressão arterial muito alta ou muito baixa<br><br>
+
+<strong style="color: #00ff88;">O QUE FAZER IMEDIATAMENTE:</strong><br><br>
+
+<strong>1. LIGAR 112</strong><br>
+Diz: "Suspeita de overdose de MDMA, pessoa com [sintomas], localização [X]"<br>
+SÊ HONESTO sobre substância - médicos NÃO chamam polícia, precisam da info para tratar<br><br>
+
+<strong>2. ENQUANTO ESPERAS:</strong><br>
+• Leva pessoa para local fresco e arejado<br>
+• Remove roupas em excesso<br>
+• Aplica água fria (não gelada!) em pescoço, axilas, virilhas<br>
+• Se consciente: pequenos goles de água<br>
+• Se inconsciente: <strong>Posição Lateral de Segurança</strong><br>
+• NÃO deixes pessoa sozinha<br>
+• Se tiver convulsão: protege cabeça, NÃO tentes segurar<br><br>
+
+<strong>3. NÃO FAZER:</strong><br>
+• Não dês mais drogas (incluindo álcool)<br>
+• Não forces a vomitar<br>
+• Não coloques em água fria (choque térmico)<br>
+• Não dês medicamentos<br><br>
+
+<strong>PREVENÇÃO:</strong><br>
+• Test kits (evita adulterantes)<br>
+• Doses baixas (1-1.5mg/kg MAX)<br>
+• Não redoses<br>
+• Hidratação adequada (500ml/hora)<br>
+• Pausas para arrefecer<br>
+• Buddies atentos uns aos outros<br><br>
+
+<strong>Lembra-te:</strong> Em emergência, honestidade salva vidas. Médicos estão do teu lado.
+`
+};
+
+return responses[questionType] || 'Desculpa, não reconheço essa pergunta específica. Tenta reformular ou usa uma das perguntas rápidas!';
+}
+</script>
+
+
+</body>
+</html>
